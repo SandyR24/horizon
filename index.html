@@ -1,3 +1,78 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Horizon — Mes activités</title><style>:root{font-family:Arial,sans-serif;color:#193650;background:#f4f7fb}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid #dce5ee;padding:18px max(20px,calc((100% - 1050px)/2));display:flex;align-items:center;justify-content:space-between}h1{margin:0;color:#215d91;font-size:28px}h2{margin-top:0}main{max-width:1050px;margin:30px auto;padding:0 20px}.panel{background:#fff;border:1px solid #dce5ee;border-radius:14px;padding:22px;margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}.tile{border:1px solid #dce5ee;border-radius:12px;padding:20px;background:#fff;cursor:pointer;text-align:left;font-size:17px;color:#193650}.tile:hover{border-color:#2672b6}button{cursor:pointer;border:0;border-radius:9px;padding:10px 14px;background:#225f95;color:#fff;font-weight:600}button.secondary{background:#e8eef5;color:#193650}input,select,textarea{font:inherit;width:100%;border:1px solid #b9c9d9;border-radius:8px;padding:10px;margin:6px 0 12px}label{font-weight:600;display:block}.muted{color:#60758a;font-size:14px}.row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}.hidden{display:none!important}.activity{border:1px solid #dce5ee;border-radius:12px;padding:15px;margin:10px 0}.tag{font-size:12px;color:#466078;background:#edf3f9;padding:5px 8px;border-radius:20px}iframe{width:100%;height:440px;border:0;border-radius:8px}fieldset{border:1px solid #dce5ee;border-radius:10px;margin:12px 0}fieldset label{font-weight:400;margin:6px 0}.check{width:auto;margin-right:7px}nav button{margin-left:8px}.notice{background:#fff8e7;border:1px solid #e9d9a5;border-radius:10px;padding:12px;font-size:14px}</style></head><body><header><div><h1>☀ HORIZON</h1><div class="muted">Mon espace d'activités</div></div><nav><button class="secondary" onclick="show('student')">Vue élève</button><button onclick="show('admin')">Enseignant</button></nav></header><main><div class="notice">Version provisoire : les exercices sont conservés uniquement dans ce navigateur. Aucun compte élève réel ni suivi automatique des scores Wordwall n'est encore activé. N'utilisez pas de données personnelles réelles.</div><section id="student"><div class="panel"><h2>Mes activités</h2><p class="muted">Choisis ton profil pour voir les activités publiées.</p><label for="profile">Profil</label><select id="profile" onchange="renderStudent()"></select></div><div class="grid" id="studentFolders"></div><div id="studentActivities"></div></section><section id="admin" class="hidden"><div class="panel"><h2>Tableau de bord enseignant</h2><p class="muted">Ajoute un exercice Wordwall et choisis à qui le publier. L'accès enseignant sera sécurisé dans la prochaine version.</p><div class="row"><button onclick="publishAll(false)" class="secondary">Tout dépublier</button><button onclick="publishAll(true)">Tout publier</button></div></div><div class="panel"><h2>Ajouter une activité</h2><form id="activityForm"><label for="title">Titre</label><input id="title" required placeholder="Ex. Reconnaître le verbe"><label for="subject">Matière</label><select id="subject" onchange="updateFolders()"><option>Français</option><option>Mathématiques</option></select><label for="folder">Dossier</label><select id="folder"></select><label for="embed">Code iframe Wordwall</label><textarea id="embed" rows="4" required placeholder='<iframe src="https://wordwall.net/embed/..."></iframe>'></textarea><fieldset><legend>Destinataires</legend><div id="targets"></div></fieldset><label><input class="check" type="checkbox" id="published"> Publier maintenant</label><button type="submit">Enregistrer l'activité</button></form></div><div class="panel"><h2>Bibliothèque d'activités</h2><div id="adminActivities"></div></div></section></main><script>
-const folders={'Français':['Grammaire','Conjugaison','Lecture','Orthographe','Vocabulaire'],'Mathématiques':['Numération','Calcul','Géométrie','Grandeurs et mesures','Problèmes','Monnaie']};const people=['Tous les élèves','Groupe bleu','Groupe vert','Groupe orange','Élève A','Élève B','Élève C'];let activities=JSON.parse(localStorage.getItem('horizon-activities-v2')||'null')||[];const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function save(){localStorage.setItem('horizon-activities-v2',JSON.stringify(activities));renderAdmin();renderStudent()}function show(id){$('student').classList.toggle('hidden',id!=='student');$('admin').classList.toggle('hidden',id!=='admin')}function updateFolders(){$('folder').innerHTML=folders[$('subject').value].map(x=>`<option>${esc(x)}</option>`).join('')}function parseIframe(raw){const d=new DOMParser().parseFromString(raw,'text/html');const el=d.querySelector('iframe');if(!el)return null;try{const u=new URL(el.getAttribute('src'));if(u.protocol!=='https:'||!/(^|\.)wordwall\.net$/.test(u.hostname)||!u.pathname.startsWith('/embed/'))return null;return u.href}catch{return null}}function renderAdmin(){$('adminActivities').innerHTML=activities.length?activities.map(a=>`<div class="activity"><div class="row"><strong>${esc(a.title)}</strong><span class="tag">${esc(a.subject)} / ${esc(a.folder)}</span></div><p class="muted">Destinataires : ${a.targets.map(esc).join(', ')||'Aucun'}</p><label><input class="check" type="checkbox" ${a.published?'checked':''} onchange="toggle(${a.id},this.checked)"> Publié</label><button class="secondary" onclick="removeActivity(${a.id})">Supprimer</button></div>`).join(''):'Aucun exercice pour le moment. Ajoute ton premier exercice Wordwall ci-dessus.'}function toggle(id,on){activities=activities.map(a=>a.id===id?{...a,published:on}:a);save()}function publishAll(on){activities=activities.map(a=>({...a,published:on}));save()}function removeActivity(id){if(confirm('Supprimer cette activité ?')){activities=activities.filter(a=>a.id!==id);save()}}function renderStudent(){const who=$('profile').value;const visible=activities.filter(a=>a.published&&(a.targets.includes('Tous les élèves')||a.targets.includes(who)));const cats=[...new Set(visible.map(a=>a.subject+' / '+a.folder))];$('studentFolders').innerHTML=cats.map(c=>`<div class="tile">📁 ${esc(c)}</div>`).join('');$('studentActivities').innerHTML=visible.length?visible.map(a=>`<article class="panel"><h2>${esc(a.title)}</h2><p class="muted">${esc(a.subject)} / ${esc(a.folder)}</p>${a.src?`<iframe loading="lazy" title="${esc(a.title)}" src="${esc(a.src)}" allowfullscreen></iframe>`:'<p class="muted">Aucun exercice Wordwall associé.</p>'}</article>`).join(''):'<div class="panel">Aucune activité publiée pour ce profil.</div>'}function init(){$('profile').innerHTML=people.slice(1).map(p=>`<option>${esc(p)}</option>`).join('');$('targets').innerHTML=people.map((p,i)=>`<label><input class="check" type="checkbox" name="target" value="${esc(p)}" ${i===0?'checked':''}> ${esc(p)}</label>`).join('');updateFolders();renderAdmin();renderStudent()}$('activityForm').addEventListener('submit',e=>{e.preventDefault();const src=parseIframe($('embed').value);if(!src){alert('Colle un code iframe valide provenant de https://wordwall.net/embed/...');return}const targets=[...document.querySelectorAll('[name=target]:checked')].map(x=>x.value);if(!targets.length){alert('Choisis au moins un destinataire.');return}activities.push({id:Date.now(),title:$('title').value.trim(),subject:$('subject').value,folder:$('folder').value,src,targets:targets.includes('Tous les élèves')?['Tous les élèves']:targets,published:$('published').checked});e.target.reset();updateFolders();save()});init();
-</script></body></html>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HORIZON - Centre 8</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f6fa;
+      margin: 0;
+      color: #193c60;
+    }
+    header {
+      background: #235c91;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+    main {
+      max-width: 750px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    h2 { text-align: center; }
+    .activite {
+      display: block;
+      background: white;
+      padding: 22px;
+      margin: 15px 0;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #193c60;
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px #ddd;
+    }
+    .activite:hover {
+      background: #e3f0fc;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HORIZON</h1>
+    <p>Mon espace d'activités</p>
+  </header>
+  <main>
+    <h2>ACTIVITÉS CENTRE 8</h2>
+
+    <a class="activite"
+       href="https://wordwall.net/play/67404/373/303?wwmethod=link"
+       target="_blank">
+       Activité 1
+    </a>
+
+    <a class="activite"
+       href="https://wordwall.net/play/62537/871/684?wwmethod=link"
+       target="_blank">
+       Activité 2
+    </a>
+
+    <a class="activite"
+       href="https://wordwall.net/play/116623/885/161?wwmethod=link"
+       target="_blank">
+       Activité 3
+    </a>
+
+    <a class="activite"
+       href="https://wordwall.net/play/116623/779/941?wwmethod=link"
+       target="_blank">
+       Activité 4
+    </a>
+  </main>
+</body>
+</html>
+
