@@ -1,78 +1,49 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HORIZON - Centre 8</title>
+  <meta name="theme-color" content="#235c91">
+  <title>HORIZON — Centres 9 et 8</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f6fa;
-      margin: 0;
-      color: #193c60;
-    }
-    header {
-      background: #235c91;
-      color: white;
-      text-align: center;
-      padding: 30px;
-    }
-    main {
-      max-width: 750px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-    h2 { text-align: center; }
-    .activite {
-      display: block;
-      background: white;
-      padding: 22px;
-      margin: 15px 0;
-      border-radius: 12px;
-      text-decoration: none;
-      color: #193c60;
-      font-size: 20px;
-      font-weight: bold;
-      box-shadow: 0 2px 8px #ddd;
-    }
-    .activite:hover {
-      background: #e3f0fc;
-    }
+    :root {font-family: Arial, Helvetica, sans-serif; color:#193c60; background:#f2f6fa;}
+    * {box-sizing:border-box;}
+    body {margin:0;}
+    header {background:#235c91; color:white; text-align:center; padding:32px 16px;}
+    header h1 {margin:0 0 8px; font-size:2.2rem; letter-spacing:.08em;}
+    header p {margin:0; font-size:1rem;}
+    main {max-width:1050px; margin:36px auto; padding:0 18px 40px;}
+    .centres {display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px;}
+    section {background:#fff; border:1px solid #dce6ee; border-radius:16px; padding:24px; box-shadow:0 3px 12px rgba(25,60,96,.06);}
+    section h2 {font-size:1.35rem; margin:0 0 7px;}
+    .subtitle {color:#536d83; margin:0 0 18px; font-size:.95rem;}
+    .activity {display:block; padding:18px; margin:12px 0; border-radius:11px; background:#edf4fb; border:1px solid #d9e7f4; color:#193c60; font-size:1.05rem; font-weight:700; text-decoration:none; transition:background .15s;}
+    .activity:hover,.activity:focus-visible {background:#d8e9f8; outline:2px solid #235c91; outline-offset:2px;}
+    .number {display:inline-flex; justify-content:center; align-items:center; width:30px; height:30px; border-radius:50%; background:#235c91; color:#fff; margin-right:10px; font-size:.9rem;}
+    @media(max-width:650px){main{margin-top:20px}.centres{grid-template-columns:1fr; gap:18px}section{padding:18px}}
   </style>
 </head>
 <body>
-  <header>
-    <h1>HORIZON</h1>
-    <p>Mon espace d'activités</p>
-  </header>
+  <header><h1>HORIZON</h1><p>Mon espace d'activités</p></header>
   <main>
-    <h2>ACTIVITÉS CENTRE 8</h2>
-
-    <a class="activite"
-       href="https://wordwall.net/play/62537/871/684?wwmethod=link"
-       target="_blank">
-       Activité 1
-    </a>
-
-    <a class="activite"
-       href="https://wordwall.net/play/67404/373/303?wwmethod=link"
-       target="_blank">
-       Activité 2
-    </a>
-
-    <a class="activite"
-       href="https://wordwall.net/play/116623/885/161?wwmethod=link"
-       target="_blank">
-       Activité 3
-    </a>
-
-    <a class="activite"
-       href="https://wordwall.net/play/116623/779/941?wwmethod=link"
-       target="_blank">
-       Activité 4
-    </a>
+    <div class="centres">
+      <section aria-labelledby="centre9">
+        <h2 id="centre9">ACTIVITÉS CENTRE 9</h2>
+        <p class="subtitle">Les 4 activités de cette semaine</p>
+        <a class="activity" href="https://wordwall.net/play/62538/140/860?wwmethod=link" target="_blank" rel="noopener noreferrer"><span class="number">1</span>Activité 1</a>
+        <a class="activity" href="https://wordwall.net/play/37264/436/479?wwmethod=link" target="_blank" rel="noopener noreferrer"><span class="number">2</span>Activité 2</a>
+        <a class="activity" href="https://wordwall.net/play/37280/559/699?wwmethod=link" target="_blank" rel="noopener noreferrer"><span class="number">3</span>Activité 3</a>
+        <a class="activity" href="https://wordwall.net/play/63742/679/868?wwmethod=link" target="_blank" rel="noopener noreferrer"><span class="number">4</span>Activité 4</a>
+      </section>
+      <section aria-labelledby="centre8">
+        <h2 id="centre8">ACTIVITÉS CENTRE 8</h2>
+        <p class="subtitle">Les 4 activités précédentes</p>
+        <a class="activity" href="https://wordwall.net/play/67404/373/303?wwmethod=link" target="_blank" rel="noopener noreferrer"><span class="number">1</span>Activité 1</a>
+        <a class="activity" href="https://wordwall.net/play/62537/871/684?wwmethod=link" target="_blank" rel="noopener noreferrer"><span class="number">2</span>Activité 2</a>
+        <a class="activity" href="https://wordwall.net/play/116623/885/161?wwmethod=link" target="_blank" rel="noopener noreferrer"><span class="number">3</span>Activité 3</a>
+        <a class="activity" href="https://wordwall.net/play/116623/779/941?wwmethod=link" target="_blank" rel="noopener noreferrer"><span class="number">4</span>Activité 4</a>
+      </section>
+    </div>
   </main>
 </body>
 </html>
-
